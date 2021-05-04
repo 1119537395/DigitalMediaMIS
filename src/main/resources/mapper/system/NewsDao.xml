@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fish.system.dao.NewsDao">
+
+    <!-- 公告的映射结果集 -->
+    <resultMap id="BaseResultMap" type="com.fish.system.domain.News">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="createtime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="opername" property="operName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 所有的字段 -->
+    <sql id="allColumn">
+        id, title, content, createtime, opername
+    </sql>
+
+
+    <!-- 查询所有的公告 -->
+    <select id="queryNewsByAll" resultMap="BaseResultMap">
+        select
+        <include refid="allColumn"/>
+        from sys_news
+        <where>
+            <if test="title != null and title !=''">
+                and title like concat("%",#{title},"%")
+            </if>
+            <if test="content != null and content !=''">
+                and content like concat("%",#{content},"%")
+            </if>
+            <if test="startTime != null">
+                and createtime <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null">
+                and createtime <![CDATA[<=]]> #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据id查询公告 -->
+    <select id="queryNewsById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="allColumn"/>
+        FROM sys_news
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据id删除公告 -->
+    <select id="deleteNewsById" parameterType="java.lang.Integer">
+        DELETE
+        FROM sys_news
+        WHERE id = #{id}
+    </select>
+
+    <!-- 添加公告信息 -->
+    <insert id="insertNewsInfo" parameterType="com.fish.system.domain.News">
+        insert into sys_news
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="createTime != null">
+                createtime,
+            </if>
+            <if test="operName != null">
+                opername,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="operName != null">
+                #{operName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新公告信息 -->
+    <update id="updateNewsInfo" parameterType="com.fish.system.domain.News">
+        update sys_news
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createtime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="operName != null">
+                opername = #{operName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+
+</mapper>

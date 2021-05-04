@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fish.business.dao.TempDao">
+
+  <!-- 实体与数据库字段映射 -->
+  <resultMap id="BaseResultMap" type="com.fish.business.domain.Temp">
+    <id column="temp_id" jdbcType="INTEGER" property="tempId" />
+    <result column="media_name" jdbcType="VARCHAR" property="mediaName" />
+    <result column="media_url" jdbcType="VARCHAR" property="mediaUrl" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    temp_id, media_name, media_url
+  </sql>
+
+  <!-- 查询临时表信息 -->
+  <select id="selectTempInfoByList" parameterType="com.fish.business.domain.Temp" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dm_temp
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dm_temp
+    where temp_id = #{tempId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from dm_temp
+    where temp_id = #{tempId,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteTempInfoByUrl" parameterType="string">
+    delete from dm_temp
+    where media_url = #{mediaUrl}
+  </delete>
+
+  <insert id="insert" parameterType="com.fish.business.domain.Temp">
+    insert into dm_temp (temp_id, media_name, media_url
+      )
+    values (#{tempId,jdbcType=INTEGER}, #{mediaName,jdbcType=VARCHAR}, #{mediaUrl,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.fish.business.domain.Temp">
+    insert into dm_temp
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="tempId != null">
+        temp_id,
+      </if>
+      <if test="mediaName != null">
+        media_name,
+      </if>
+      <if test="mediaUrl != null">
+        media_url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="tempId != null">
+        #{tempId,jdbcType=INTEGER},
+      </if>
+      <if test="mediaName != null">
+        #{mediaName,jdbcType=VARCHAR},
+      </if>
+      <if test="mediaUrl != null">
+        #{mediaUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fish.business.domain.Temp">
+    update dm_temp
+    <set>
+      <if test="mediaName != null">
+        media_name = #{mediaName,jdbcType=VARCHAR},
+      </if>
+      <if test="mediaUrl != null">
+        media_url = #{mediaUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where temp_id = #{tempId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fish.business.domain.Temp">
+    update dm_temp
+    set media_name = #{mediaName,jdbcType=VARCHAR},
+      media_url = #{mediaUrl,jdbcType=VARCHAR}
+    where temp_id = #{tempId,jdbcType=INTEGER}
+  </update>
+</mapper>

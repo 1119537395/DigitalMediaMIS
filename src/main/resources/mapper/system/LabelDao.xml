@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fish.system.dao.LabelDao">
+
+    <!-- Label的映射结果集 -->
+    <resultMap id="BaseResultMap" type="com.fish.system.domain.Label">
+        <id column="label_id" jdbcType="INTEGER" property="labelId"/>
+        <result column="label_name" jdbcType="VARCHAR" property="labelName"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_user_id" jdbcType="VARCHAR" property="createUserId"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="modify_user_id" jdbcType="INTEGER" property="modifyUserId"/>
+        <result column="media_count" jdbcType="INTEGER" property="mediaCount"/>
+        <result column="create_name" jdbcType="VARCHAR" property="createName"/>
+        <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
+    </resultMap>
+
+    <!-- 所有的字段 -->
+    <sql id="allColumn1">
+        label_id, label_name, create_time, create_user_id, modify_time, modify_user_id, media_count
+    </sql>
+
+    <sql id="allColumn2">
+        SELECT label_id,
+               label_name,
+               create_time,
+               create_user_id,
+               modify_time,
+               modify_user_id,
+               media_count,
+               suser.user_name   as create_name,
+               sysuser.user_name as modify_name
+        FROM dm_label label
+                 LEFT JOIN sys_user as suser
+                           ON label.create_user_id = suser.user_id
+                 INNER JOIN sys_user as sysuser
+                            ON label.modify_user_id = sysuser.user_id
+    </sql>
+
+    <!-- 查询标签信息 -->
+    <select id="queryLabelInfo" resultMap="BaseResultMap">
+        select
+        <include refid="allColumn1"/>
+        from
+        dm_label
+        <where>
+            <if test="labelName != null and labelName !=''">
+               and label_name = #{labelName}
+            </if>
+            <if test="labelId != null">
+               and label_id = #{labelId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据标签名称查询标签信息 -->
+    <select id="queryLabelInfoByName" parameterType="string" resultMap="BaseResultMap">
+        select
+            <include refid="allColumn1"/>
+        from
+            dm_label
+        where label_name = #{labelName}
+    </select>
+
+    <!-- 查询所有标签信息 -->
+    <select id="selectLabelInfo" resultMap="BaseResultMap">
+        <include refid="allColumn2"/>
+        <where>
+            <if test="labelName != null and labelName !=''">
+                and label_name like concat("%",#{labelName},"%")
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询标签分类信息 -->
+    <select id="queryMediaClassLabel" resultMap="BaseResultMap">
+        select
+            <include refid="allColumn1"/>
+        from
+            dm_label
+    </select>
+
+    <!--删除标签 -->
+    <delete id="deleteLabelInfo" parameterType="integer">
+        DELETE
+        FROM dm_label
+        WHERE label_id = #{labelId}
+    </delete>
+
+    <!-- 修改标签 -->
+    <update id="updateLabelInfo" parameterType="com.fish.system.domain.Label">
+        update dm_label
+        <set>
+            <if test="labelName != null">
+                label_name = #{labelName},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime},
+            </if>
+            <if test="modifyUserId != null">
+                modify_user_id = #{modifyUserId},
+            </if>
+            <if test="mediaCount != null">
+                media_count = #{mediaCount},
+            </if>
+        </set>
+        where label_id = #{labelId}
+    </update>
+    <!-- 添加标签 -->
+    <insert id="insertLabelInfo" parameterType="com.fish.system.domain.Label">
+        insert into dm_label
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="labelName != null">
+                label_name,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createUserId != null">
+                create_user_id,
+            </if>
+            <if test="modifyTime != null">
+                modify_time,
+            </if>
+            <if test="modifyUserId != null">
+                modify_user_id,
+            </if>
+            <if test="mediaCount != null">
+                media_count,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="labelName != null">
+                #{labelName},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime},
+            </if>
+            <if test="modifyUserId != null">
+                #{modifyUserId},
+            </if>
+            <if test="mediaCount != null">
+                #{mediaCount},
+            </if>
+        </trim>
+    </insert>
+
+
+</mapper>

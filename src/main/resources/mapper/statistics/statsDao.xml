@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fish.statistics.dao.StatsDao">
+
+
+    <!-- 查询柱形图的统计数据 -->
+    <select id="queryMediaCharData" resultType="com.fish.statistics.domain.BaseEntity">
+        SELECT
+            media_name as name,view_count as value
+        FROM
+            dm_media
+        GROUP BY
+            media_name
+    </select>
+
+    <!-- 查询扇形图的统计数据 -->
+    <select id="loadMediaFanChartData" resultType="com.fish.statistics.domain.BaseEntity">
+        SELECT
+            media_label as name,count(media_label) as value
+        FROM
+            dm_media
+        GROUP BY
+            media_label
+    </select>
+
+
+
+</mapper>
